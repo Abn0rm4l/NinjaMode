@@ -8,8 +8,11 @@ import java.util.Random;
 import javafx.scene.text.Text;
 import javafx.scene.paint.Color;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+
 import javafx.scene.Scene;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
@@ -33,9 +36,22 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.RadioMenuItemBuilder;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+
+import javafx.beans.binding.DoubleBinding;
+import javafx.beans.binding.NumberBinding;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 /**
  *
@@ -46,12 +62,14 @@ public class HellowWorldMain extends Application {
     @Override
     public void start(Stage primaryStage) 
     { 
-        //ex1(primaryStage);
-        //ex2();
-        //ex3();
-        //ex4();
-        //ex5();
-        ex6();
+//        ex1(primaryStage);
+//        ex2();
+//        ex3();
+//        ex4();
+//        ex5();
+//        ex6();
+//        ex7();
+        ex8();
     }
     
     
@@ -444,6 +462,202 @@ public class HellowWorldMain extends Application {
         primaryStage.show();
     }
     
+    
+    public void ex7()
+    {
+        Stage primaryStage = new Stage();
+        primaryStage.setTitle("Chapter 1-9 Generating Borders");
+        Group root = new Group();
+        Scene scene = new Scene(root, 600, 350, Color.WHITE);
+        
+        // create grid pane
+        GridPane gridpane = new GridPane();
+        gridpane.setPadding(new Insets(5));
+        gridpane.setHgap(10);
+        gridpane.setVgap(10);
+        
+        // label CSS Editor
+        Label cssEditorLbl = new Label("CSS Editor");
+        GridPane.setHalignment(cssEditorLbl, HPos.CENTER);
+        gridpane.add(cssEditorLbl, 0, 0);
+        
+        // label Border View
+        Label borderLbl = new Label("Border View");
+        GridPane.setHalignment(borderLbl, HPos.CENTER);
+        gridpane.add(borderLbl, 1, 0);
+        
+        // Text area for CSS editor
+        final TextArea cssEditorFld = new TextArea();
+        cssEditorFld.setPrefRowCount(10);
+        cssEditorFld.setPrefColumnCount(100);
+        cssEditorFld.setWrapText(true);
+        cssEditorFld.setPrefWidth(150);
+        GridPane.setHalignment(cssEditorFld, HPos.CENTER);
+        gridpane.add(cssEditorFld, 0, 1);
+        
+        String cssDefault = "-fx-border-color:blue;\n"
+                            + "-fx-border-insets: 5;\n"
+                            + "-fx-border-width: 10;\n"
+                            + "-fx-border-style: dashed;\n";
+        cssEditorFld.setText(cssDefault);
+        
+        // Border decorate the picture
+        final ImageView imv = new ImageView();
+        final Image image2 = new Image(HellowWorldMain.class.getResourceAsStream("smoke_glass_buttons1.png"));
+        imv.setImage(image2);
+        
+        final HBox pictureRegion = new HBox();
+        pictureRegion.setStyle(cssDefault);
+        pictureRegion.getChildren().add(imv);
+        gridpane.add(pictureRegion, 1, 1);
+        
+        Button apply = new Button("Bling!");
+        GridPane.setHalignment(apply, HPos.RIGHT);
+        gridpane.add(apply, 0, 2);
+        
+        apply.setOnAction(new EventHandler<ActionEvent>()
+            {
+                @Override
+                public void handle(ActionEvent event) 
+                {
+                pictureRegion.setStyle( cssEditorFld.getText() );
+                }
+            });
+                                 
+        root.getChildren().add(gridpane);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+    
+    
+    public void ex8()
+    {
+        System.out.println("Chapter 1-10 Binding Expressions\n");
+        
+        System.out.println("Binding a Contact bean [Bi-directional binding]");
+        Contact contact = new Contact("John", "Doe");
+        StringProperty fname = new SimpleStringProperty();
+        fname.bindBidirectional( contact.getFirstNameProperty() );
+        StringProperty lname = new SimpleStringProperty();
+        lname.bindBidirectional( contact.getLastNameProperty() );
+        
+        System.out.println("Current - StringProperty value : " 
+                            + fname.getValue() + " "
+                            + lname.getValue() );
+        System.out.println("Current Contact values : "
+                            + contact.getFirstName() + " "
+                            + contact.getLastName() );
+        
+        System.out.println("Modifying StringProperty values");
+        fname.setValue("Jane");
+        lname.setValue("Deer");
+        
+        System.out.println("After - StringProperty values : "
+                            + fname.getValue() + " "
+                            + lname.getValue() );
+        System.out.println("After - Contact values : "
+                            + contact.getFirstName() + " "
+                            + contact.getLastName() );
+        
+        System.out.println();
+        System.out.println("A Area of a Rectangle [ High level Fluent API]");
+        
+        // Area = width * height
+        final IntegerProperty width = new SimpleIntegerProperty( 10 );
+        final IntegerProperty height = new SimpleIntegerProperty( 10 );
+        
+        NumberBinding area = width.multiply(height);
+        
+        System.out.println("Current - Width and Height : "
+                            + width.get()  + " "
+                            + height.get() );
+        System.out.println("Current - Area of the Rectangle: "
+                            + area.getValue() );
+        
+        System.out.println("Modifying width and height");
+        width.set( 100 );
+        height.set( 700 );
+        
+        System.out.println("After - Width and Height : "
+                            + width.get() + " "
+                            + height.get() );
+        System.out.println("After - Area of Rectangle : "
+                            + area.getValue() );
+        
+        System.out.println();
+        System.out.println("A Volume of a Sphere [low level API]");
+        
+        // Volume = 4/3 * pi * r^3
+        final DoubleProperty radius = new SimpleDoubleProperty( 2 );
+        
+        DoubleBinding volumeOfSphere = new DoubleBinding()
+        {
+            {
+                super.bind( radius );
+            }
+            
+            @Override
+            protected double computeValue() 
+            {
+                return( 4/3 * Math.PI * Math.pow( radius.get(), 3) );
+            }
+        };
+        
+        System.out.println("Current - radius for Sphere: "
+                            + radius.get() );
+        System.out.println("Current - volume for Sphere: "
+                            + volumeOfSphere.get() );
+        
+        System.out.println("Modifying DoubleProperty radius");
+        radius.set( 50 );
+        
+        System.out.println("After - radius for Sphere: "
+                            + radius.get() );
+        System.out.println("After - volume for Sphere: "
+                            + volumeOfSphere.get() );
+    }
+    
+    class Contact
+    {
+        private SimpleStringProperty firstName = new SimpleStringProperty();
+        private SimpleStringProperty lastName = new SimpleStringProperty();
+        
+        public Contact(String fn, String ln)
+        {
+            firstName.setValue(fn);
+            lastName.setValue(ln);
+        }
+        
+        public final String getFirstName()
+        {
+            return firstName.getValue();
+        }
+        
+        public final StringProperty getFirstNameProperty()
+        {
+            return firstName;
+        }
+        
+        public final void setFirstName(String firstName)
+        {
+            this.firstName.setValue(firstName);
+        }
+        
+        public final String getLastName()
+        {
+            return lastName.getValue();
+        }
+        
+        public final StringProperty getLastNameProperty()
+        {
+            return lastName;
+        }
+        
+        public final void setLastName(String lastName)
+        {
+            this.lastName.setValue(lastName);
+        }
+    }
     
     /**
      * The main() method is ignored in correctly deployed JavaFX application.

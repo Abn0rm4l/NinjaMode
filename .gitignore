@@ -4,3 +4,5 @@
 *.jar
 *.war
 *.ear
+/Java Projects/HellowWorldMain/build/
+/Java Projects/HellowWorldMain/dist/
