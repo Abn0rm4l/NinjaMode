@@ -52,6 +52,11 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.VPos;
+import javafx.scene.control.ListView;
+import javafx.scene.layout.VBox;
 
 /**
  *
@@ -69,7 +74,8 @@ public class HellowWorldMain extends Application {
 //        ex5();
 //        ex6();
 //        ex7();
-        ex8();
+//        ex8();
+        ex9();
     }
     
     
@@ -657,6 +663,96 @@ public class HellowWorldMain extends Application {
         {
             this.lastName.setValue(lastName);
         }
+    }
+    
+    public void ex9()
+    {
+        Stage primaryStage = new Stage();
+        primaryStage.setTitle("Chapter 1-11 Creating and Working with ObservableLists");
+        Group root = new Group();
+        Scene scene = new Scene(root, 400, 250, Color.WHITE);
+        
+        // create a grid pane
+        GridPane gridpane = new GridPane();
+        gridpane.setPadding( new Insets(5) );
+        gridpane.setHgap( 10 );
+        gridpane.setVgap( 10 );
+        
+        // candidates label
+        Label candidatesLbl = new Label( "Candidates" );
+        GridPane.setHalignment( candidatesLbl, HPos.CENTER);
+        gridpane.add(candidatesLbl, 0, 0);
+        
+        Label heroesLbl = new Label( "Heroes" );
+        gridpane.add(heroesLbl, 2, 0);
+        GridPane.setHalignment(heroesLbl, HPos.CENTER);
+        
+        // candidates
+        final ObservableList<String> candidates = 
+                FXCollections.observableArrayList("Superman",
+                                                  "Spiderman",
+                                                  "Wolverine",
+                                                  "Police",
+                                                  "Fire Rescue",
+                                                  "Soldiers",
+                                                  "Dad & Mom",
+                                                  "Doctor",
+                                                  "Politician",
+                                                  "Pastor",
+                                                  "Teacher");
+        final ListView<String> candidatesListView = new ListView<String>(candidates);
+        candidatesListView.setPrefWidth( 150 );
+        candidatesListView.setPrefHeight( 150 );
+        
+        gridpane.add(candidatesListView, 0, 1);
+        
+        // heroes
+        final ObservableList<String> heroes = FXCollections.observableArrayList();
+        final ListView<String> heroListView = new ListView<String>(heroes);
+        heroListView.setPrefWidth( 150 );
+        heroListView.setPrefHeight( 150 );
+        
+        gridpane.add(heroListView, 2, 1);
+        
+        // select heroes
+        Button sendRightButton = new Button(">");
+        sendRightButton.setOnAction( new EventHandler<ActionEvent>()  {
+                @Override
+                public void handle(ActionEvent event) {
+                    String potential = candidatesListView.getSelectionModel().getSelectedItem();
+                    if( potential != null) {
+                        heroListView.getSelectionModel().clearSelection();
+                        candidates.remove( potential );
+                        heroes.add( potential );
+                    }
+                }
+            } );
+        
+        // deselect heroes
+        Button sendLeftButton = new Button("<");
+        sendLeftButton.setOnAction( new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+                String notHero = heroListView.getSelectionModel().getSelectedItem();
+                if( notHero != null) {
+                    heroListView.getSelectionModel().clearSelection();
+                    heroes.remove( notHero );
+                    candidates.add( notHero );
+                }
+            }
+        });
+        
+        VBox vbox = new VBox();
+        vbox.getChildren().addAll( sendRightButton, sendLeftButton );
+        
+        gridpane.add(vbox, 1, 1);
+        GridPane.setConstraints(vbox, 1, 1, 1, 2, HPos.CENTER, VPos.CENTER);
+        
+        root.getChildren().add(gridpane);
+        primaryStage.setScene(scene);
+        primaryStage.setResizable( false );
+        primaryStage.show();
     }
     
     /**
